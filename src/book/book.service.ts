@@ -16,7 +16,7 @@ export class BookService {
   ) {}
 
   async findAll(query: Query): Promise<Book[]> {
-    const bookPerPage = 2;
+    const bookPerPage = Number(query.limit) || 10;
     const currentPage = Number(query.page) || 1;
     const skip = bookPerPage * (currentPage - 1);
 
@@ -28,11 +28,13 @@ export class BookService {
           },
         }
       : {};
+
     const books = await this.bookModel
       .find({ ...keyword })
       .sort('title')
       .limit(bookPerPage)
-      .skip(skip);
+      .skip(skip)
+      .lean();
     return books;
   }
 
