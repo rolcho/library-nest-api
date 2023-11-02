@@ -1,0 +1,20 @@
+version: '3.8'
+services:
+  nestjs:
+    image: node:18-alpine
+    volumes:
+      - ./:/usr/src/app
+    working_dir: /usr/src/app
+    command: bash -c "npm install && npm run start:dev"
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongodb
+  mongodb:
+    image: mongo:latest
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - 27017:27017
+volumes:
+  mongodb_data:
