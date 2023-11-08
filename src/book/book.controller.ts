@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { BookService } from './book.service';
@@ -32,8 +33,11 @@ export class BookController {
 
   @Post()
   @UseGuards(AuthGuard())
-  async createBook(@Body() book: CreateBookDto): Promise<Book> {
-    return this.bookService.create(book);
+  async createBook(
+    @Body() book: CreateBookDto,
+    @Req() req: any,
+  ): Promise<Book> {
+    return this.bookService.create(book, req.user);
   }
 
   @Put(':id')
