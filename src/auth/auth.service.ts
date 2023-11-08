@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
@@ -23,31 +19,33 @@ export class AuthService {
     const { name, email, password } = signupDto;
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const role =
-      (await this.userModel.countDocuments({})) === 0 ? 'admin' : 'user';
+
     const user = await this.userModel.create({
       name,
       email,
       password: hashedPassword,
-      role,
     });
-    const token = await this.jwtService.signAsync({ id: user._id, role: role });
+
+    const token = await this.jwtService.signAsync({ id: user._id });
+
     return { token };
   }
 
-  async signIn(loginDto: LoginDto): Promise<{ token: string }> {
+  async login(loginDto: LoginDto): Promise<{ token: string }> {
     const { email, password } = loginDto;
+
     const user = await this.userModel.findOne({ email });
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new UnauthorizedException('Invalid email or password');
     }
+
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new BadRequestException('Invalid password');
+      throw new UnauthorizedException('Invalid email or password');
     }
+
     const token = await this.jwtService.signAsync({
       id: user._id,
-      role: user.role,
     });
     return { token };
   }
