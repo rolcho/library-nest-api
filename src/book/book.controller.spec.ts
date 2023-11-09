@@ -97,30 +97,36 @@ describe('BookSController', () => {
 
   describe('updateBook', () => {
     it('should update a book', async () => {
-      const updateBook = {
-        title: 'Fantastic User',
+      const titleUpdate = { title: 'Fantastic Updated' };
+      const mockUpdatedBook = {
+        ...mockBook,
+        ...titleUpdate,
       };
 
-      mockBookService.updateById = jest.fn().mockResolvedValueOnce(mockBook);
+      mockBookService.updateById = jest
+        .fn()
+        .mockResolvedValueOnce(mockUpdatedBook);
 
       const result = await bookController.updateBook(
         mockBook._id,
-        updateBook as UpdateBookDto,
+        titleUpdate as UpdateBookDto,
       );
 
       expect(bookService.updateById).toHaveBeenCalled();
-      expect(result).toStrictEqual(mockBook);
+      expect(result).toStrictEqual(mockUpdatedBook);
     });
   });
 
   describe('deleteBook', () => {
     it('should delete a book', async () => {
-      mockBookService.deleteById = jest.fn().mockResolvedValueOnce(mockBook);
+      mockBookService.deleteById = jest
+        .fn()
+        .mockResolvedValueOnce({ delete: true });
 
       const result = await bookController.deleteBook(mockBook._id);
 
       expect(bookService.deleteById).toHaveBeenCalled();
-      expect(result).toStrictEqual(mockBook);
+      expect(result).toStrictEqual({ delete: true });
     });
   });
 });
