@@ -7,7 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
 
-describe('BookService', () => {
+describe('AuthService', () => {
   let authService: AuthService;
   let model: Model<User>;
   let jwtService: JwtService;
