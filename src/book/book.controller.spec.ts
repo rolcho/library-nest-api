@@ -7,7 +7,7 @@ import { CreateBookDto } from './dto/create-book.dto';
 import { User } from '../auth/schemas/user.schema';
 import { UpdateBookDto } from './dto/update-book.dto';
 
-describe('BookSController', () => {
+describe('BookController', () => {
   let bookService: BookService;
   let bookController: BookController;
 

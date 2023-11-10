@@ -54,20 +54,19 @@ describe('AuthService', () => {
       password: 'mypassword',
     };
 
-    it('should be create new user', async () => {
-      jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashedPassword');
-      jest
-        .spyOn(model, 'create')
-        .mockImplementationOnce(() => Promise.resolve(mockUser) as any);
+    it('should create a new user', async () => {
+      jest.spyOn(bcrypt, 'hash').mockResolvedValue('hashedPassword' as never);
+      jest.spyOn(model, 'create').mockResolvedValueOnce(mockUser as any);
       jest.spyOn(jwtService, 'signAsync').mockResolvedValue('jwtToken');
 
       const result = await authService.signUp(signupDto);
 
       expect(bcrypt.hash).toHaveBeenCalled();
+      expect(result).toEqual({ token: 'jwtToken' });
       expect(result).toEqual({ token });
     });
 
-    it('duplicate email throw ConflicException', async () => {
+    it('should throw ConflicException on duplicate email', async () => {
       jest
         .spyOn(model, 'create')
         .mockImplementationOnce(() => Promise.reject({ code: 11000 }));
@@ -86,7 +85,7 @@ describe('AuthService', () => {
 
     it('should login user and return the token', async () => {
       jest.spyOn(model, 'findOne').mockResolvedValueOnce(mockUser);
-      jest.spyOn(bcrypt, 'compare').mockResolvedValue(true);
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(true as never);
       jest.spyOn(jwtService, 'signAsync').mockResolvedValue(token);
 
       const result = await authService.login(loginDto);
@@ -104,7 +103,7 @@ describe('AuthService', () => {
 
     it('should throw UnauthorizedException if passwords does not match', async () => {
       jest.spyOn(model, 'findOne').mockResolvedValueOnce(mockUser);
-      jest.spyOn(bcrypt, 'compare').mockResolvedValue(false);
+      jest.spyOn(bcrypt, 'compare').mockResolvedValue(false as never);
 
       expect(authService.login(loginDto)).rejects.toThrow(
         new UnauthorizedException('Invalid email or password'),
