@@ -17,8 +17,16 @@ export class BookService {
   ) {}
 
   async findAll(query: Query): Promise<Book[]> {
-    const bookPerPage = Number(query.limit) || 10;
-    const currentPage = Number(query.page) || 1;
+    let bookPerPage = Number(query.limit) || 10;
+    if (bookPerPage <= 0) {
+      bookPerPage = 10;
+    }
+
+    let currentPage = Number(query.page) || 1;
+    if (currentPage <= 0) {
+      currentPage = 1;
+    }
+
     const skip = bookPerPage * (currentPage - 1);
 
     const keyword = query.keyword
